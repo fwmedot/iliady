@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BLONDED</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #f5f2ee;
+      --text: #111;
+      --muted: #999;
+      --border: #ddd;
+      --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 12px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+```
+.site {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px 80px;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 12px;
+  border-bottom: 1px solid var(--border);
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.site-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.topbar-nav { display: flex; gap: 12px; }
+.topbar-nav a {
+  font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.15s;
+}
+.topbar-nav a:hover, .topbar-nav a.active { color: var(--text); }
+.topbar-right { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.topbar-right a:hover { color: var(--text); }
+
+.timestamp {
+  font-size: 10px; color: var(--muted); letter-spacing: 0.04em;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+
+/* POSTS */
+.post { border-bottom: 1px solid var(--border); padding: 24px 0; }
+.post-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.post-title a:hover { text-decoration: underline; }
+
+/* IMAGE */
+.post-img { width: 100%; background: #e8e4df; }
+.post-img img { width: 100%; height: auto; display: block; }
+
+/* SLIDESHOW */
+.slideshow { position: relative; overflow: hidden; background: #e8e4df; }
+.slideshow-track { display: flex; transition: transform 0.4s ease; }
+.slideshow-track img { min-width: 100%; width: 100%; height: auto; display: block; object-fit: cover; }
+.slide-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(245,242,238,0.75); border: none; width: 28px; height: 28px;
+  cursor: pointer; font-size: 14px; display: flex; align-items: center;
+  justify-content: center; color: #111; z-index: 2; transition: background 0.15s;
+}
+.slide-btn:hover { background: rgba(245,242,238,0.95); }
+.slide-btn.prev { left: 6px; } .slide-btn.next { right: 6px; }
+.slide-counter {
+  position: absolute; bottom: 8px; right: 10px;
+  font-size: 9px; letter-spacing: 0.08em; color: var(--muted);
+}
+
+/* PRODUCT INFO */
+.post-product-info { padding: 10px 0 0; }
+.post-product-info p { font-size: 10px; color: var(--muted); line-height: 1.7; letter-spacing: 0.02em; margin-bottom: 6px; }
+.post-price { font-size: 11px; letter-spacing: 0.04em; margin-top: 4px; }
+.btn-purchase {
+  display: inline-block; margin-top: 12px; background: var(--text); color: var(--bg);
+  font-family: var(--font); font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 9px 18px; cursor: pointer; border: none; transition: opacity 0.15s;
+}
+.btn-purchase:hover { opacity: 0.7; }
+
+/* SIZE / COLOR */
+.size-row, .color-row {
+  display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap;
+}
+.size-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.size-btn {
+  border: 1px solid var(--border); background: transparent; font-family: var(--font);
+  font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 8px;
+  cursor: pointer; color: var(--text); transition: border-color 0.15s, background 0.15s;
+}
+.size-btn:hover, .size-btn.active { border-color: var(--text); background: var(--text); color: var(--bg); }
+.size-btn.sold { color: var(--muted); text-decoration: line-through; cursor: default; }
+.size-btn.sold:hover { border-color: var(--border); background: transparent; color: var(--muted); }
+
+/* EMBEDS */
+.post-embed { width: 100%; border: none; display: block; }
+
+/* TEXT */
+.post-text { font-size: 11px; line-height: 1.65; letter-spacing: 0.01em; margin-top: 10px; }
+
+/* SHARE */
+.post-share { display: flex; align-items: center; gap: 0; margin-top: 12px; }
+.share-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-right: 10px; }
+.share-icons { display: flex; gap: 10px; }
+.share-icons a { font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; }
+.share-icons a:hover { color: var(--text); }
+
+/* VIDEO HERO */
+.video-hero { width: 100%; background: #000; }
+.video-hero video { width: 100%; display: block; max-height: 280px; object-fit: cover; }
+
+/* FOOTER */
+footer { border-top: 1px solid var(--border); padding: 16px 0 24px; display: flex; gap: 20px; }
+footer a { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; }
+footer a:hover { color: var(--text); }
+
+/* SUBSCRIBE BANNER */
+.subscribe-banner {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg); border-top: 1px solid var(--border);
+  padding: 10px 16px; display: flex; align-items: center;
+  justify-content: space-between; z-index: 100;
+}
+.subscribe-inner { max-width: 480px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+.subscribe-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.subscribe-form { display: flex; gap: 8px; }
+.subscribe-input {
+  border: 1px solid var(--border); background: transparent; font-family: var(--font);
+  font-size: 10px; letter-spacing: 0.04em; padding: 5px 10px; outline: none; width: 160px;
+}
+.subscribe-input:focus { border-color: var(--text); }
+.subscribe-btn {
+  background: var(--text); color: var(--bg); border: none; font-family: var(--font);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px 12px; cursor: pointer; transition: opacity 0.15s;
+}
+.subscribe-btn:hover { opacity: 0.7; }
+```
+
+  </style>
+</head>
+<body>
+
+<div class="site">
+
+  <!-- TOP BAR -->
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="site-title">Blonded</span>
+      <nav class="topbar-nav">
+        <a href="#" class="active">All</a>
+        <a href="#">Photo</a>
+        <a href="#">Video</a>
+        <a href="#">Audio</a>
+      </nav>
+    </div>
+    <div class="topbar-right"><a href="#">Log in</a></div>
+  </div>
+
+  <div class="timestamp" id="ts"></div>
+
+  <div class="feed">
+
+```
+<!-- VIDEO -->
+<div class="post">
+  <div class="video-hero">
+    <video autoplay muted loop playsinline poster="https://blonded.co/cdn/shop/files/preview_images/6a488865b9314fe5a91b80cbd8b9c01e.thumbnail.0000000_small.jpg?v=1657466832">
+      <source src="https://blonded.co/cdn/shop/videos/c/vp/6a488865b9314fe5a91b80cbd8b9c01e/6a488865b9314fe5a91b80cbd8b9c01e.HD-720p-4.5Mbps.mp4?v=0" type="video/mp4">
+      <img src="https://blonded.co/cdn/shop/files/preview_images/6a488865b9314fe5a91b80cbd8b9c01e.thumbnail.0000000_small.jpg?v=1657466832" alt="Blonded">
+    </video>
+  </div>
+</div>
+
+<!-- BLONDE VINYL -->
+<div class="post">
+  <div class="post-title"><a href="#">BLONDE</a></div>
+  <div class="slideshow">
+    <div class="slideshow-track" id="t-blonde">
+      <img src="https://blonded.co/cdn/shop/products/29_blonde-02-b.jpg?v=1671293064&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/products/29_blonde-01-b_1.jpg?v=1671294294&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/products/221217_blonde-record-poster.jpg?v=1671309629&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/products/221217_blonde-vinyl-sleeves.jpg?v=1671309629&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/products/221217_blonde-vinyl_disks.jpg?v=1671309629&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/products/221217_blonde-lyrics-sheet.jpg?v=1671309629&width=800" alt="">
+    </div>
+    <button class="slide-btn prev" onclick="slide('blonde',-1)">&#8592;</button>
+    <button class="slide-btn next" onclick="slide('blonde', 1)">&#8594;</button>
+    <span class="slide-counter" id="c-blonde">1 / 6</span>
+  </div>
+  <div class="post-product-info">
+    <p>2 Record Gatefold Packaging &nbsp;12" x 36" Lyrics foldout &nbsp;12" x 24" Foldout poster</p>
+    <p><em>Please allow 2–6 weeks for fulfillment.</em></p>
+    <div class="post-price">$ 65.00</div>
+    <button class="btn-purchase">Purchase</button>
+  </div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- CHANNEL ORANGE -->
+<div class="post">
+  <div class="post-title"><a href="#">Channel Orange</a></div>
+  <div class="slideshow">
+    <div class="slideshow-track" id="t-co">
+      <img src="https://blonded.co/cdn/shop/files/channel-orange_blonded_1.jpg?v=1750929486&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/channel-orange_blonded_2.jpg?v=1750929486&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/channel-orange_blonded_3.jpg?v=1750929486&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/channel-orange_blonded_4.jpg?v=1750929486&width=800" alt="">
+    </div>
+    <button class="slide-btn prev" onclick="slide('co',-1)">&#8592;</button>
+    <button class="slide-btn next" onclick="slide('co', 1)">&#8594;</button>
+    <span class="slide-counter" id="c-co">1 / 4</span>
+  </div>
+  <div class="post-product-info">
+    <p>2 Record Gatefold Packaging</p>
+    <p><em>Please allow 2–6 weeks for fulfillment.</em></p>
+    <div class="post-price">$ 69.00</div>
+    <button class="btn-purchase">Purchase</button>
+  </div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- FOCUSING T-SHIRT -->
+<div class="post">
+  <div class="post-title"><a href="#">FOCUSING T-SHIRT</a></div>
+  <div class="slideshow">
+    <div class="slideshow-track" id="t-fo">
+      <img src="https://blonded.co/cdn/shop/files/radio-grey-purple-3000.png?v=1776287529&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/radio-red-blue-3000.png?v=1776287529&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/blue-purple-radio-3000.png?v=1776287529&width=800" alt="">
+    </div>
+    <button class="slide-btn prev" onclick="slide('fo',-1)">&#8592;</button>
+    <button class="slide-btn next" onclick="slide('fo', 1)">&#8594;</button>
+    <span class="slide-counter" id="c-fo">1 / 3</span>
+  </div>
+  <div class="post-product-info">
+    <p>100% COTTON — MADE IN THE USA</p>
+    <div class="color-row">
+      <span class="size-label">Color</span>
+      <button class="size-btn sold">BLACK</button>
+      <button class="size-btn active">RED</button>
+      <button class="size-btn">BLUE</button>
+    </div>
+    <div class="size-row">
+      <span class="size-label">Size</span>
+      <button class="size-btn sold">XS</button><button class="size-btn sold">S</button>
+      <button class="size-btn active">M</button><button class="size-btn">L</button>
+      <button class="size-btn sold">XL</button><button class="size-btn sold">XXL</button>
+    </div>
+    <div class="post-price" style="margin-top:10px;">$ 64.95</div>
+    <button class="btn-purchase">Purchase</button>
+  </div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- GOING GONE T-SHIRT -->
+<div class="post">
+  <div class="post-title"><a href="#">GOING GONE T-SHIRT</a></div>
+  <div class="slideshow">
+    <div class="slideshow-track" id="t-gg">
+      <img src="https://blonded.co/cdn/shop/files/going-white-front-3000.png?v=1776287736&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/going-white-back-3000.png?v=1776287736&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/going-black-front-3000.png?v=1776287725&width=800" alt="">
+      <img src="https://blonded.co/cdn/shop/files/gone-black-back-3000.png?v=1776287736&width=800" alt="">
+    </div>
+    <button class="slide-btn prev" onclick="slide('gg',-1)">&#8592;</button>
+    <button class="slide-btn next" onclick="slide('gg', 1)">&#8594;</button>
+    <span class="slide-counter" id="c-gg">1 / 4</span>
+  </div>
+  <div class="post-product-info">
+    <p>100% COTTON — MADE IN THE USA</p>
+    <div class="color-row">
+      <span class="size-label">Color</span>
+      <button class="size-btn active">WHITE</button>
+      <button class="size-btn">BLACK</button>
+    </div>
+    <div class="size-row">
+      <span class="size-label">Size</span>
+      <button class="size-btn sold">S</button><button class="size-btn active">M</button>
+      <button class="size-btn">L</button><button class="size-btn">XL</button>
+      <button class="size-btn sold">XXL</button>
+    </div>
+    <div class="post-price" style="margin-top:10px;">$ 89.50</div>
+    <button class="btn-purchase">Purchase</button>
+  </div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- CAYENDO -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/cayendo" target="_blank">Cayendo</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/cayendo" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/Frank_Ocean_-_Cayendo_A_Side_-_Acoustic_grande.jpg?v=1585885573" alt="Cayendo">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- DEAR APRIL -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/dear-april" target="_blank">Dear April</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/dear-april" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/Frank_Ocean_-_Dear_April_A_Side_-_Acoustic_grande.jpg?v=1585885706" alt="Dear April">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- IN MY ROOM -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/inmyroom" target="_blank">IN MY ROOM</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/inmyroom" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/FRANK_OCEAN_IN_MY_ROOM_1024x1024.jpg?v=1572744205" alt="In My Room">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- SPOTIFY PLAYLIST -->
+<div class="post">
+  <div class="post-title"><a href="#">blonded-playlist</a></div>
+  <iframe class="post-embed" src="https://open.spotify.com/embed/playlist/6HEegfWHhUcytwQFAm1QbK?utm_source=generator&theme=0" height="380" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- DHL -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/_dhl" target="_blank">DHL</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/_dhl" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/FRANK_OCEAN_DHL_1024x1024.jpg?v=1571531331" alt="DHL">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- 42% -->
+<div class="post">
+  <div class="post-title"><a href="#">42%</a></div>
+  <div class="post-img">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/HiResMainFlyerV2-2_1024x1024.jpg?v=1541527106" alt="42%">
+  </div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- MOONRIVER -->
+<div class="post">
+  <div class="post-title"><a href="#">MOONRIVER</a></div>
+  <iframe class="post-embed" src="https://www.youtube-nocookie.com/embed/mXiFHDfvn4A?rel=0&showinfo=0" height="270" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- PROVIDER -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/provider" target="_blank">provider</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/provider" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/FOprovider2-1_1024x1024.jpg?v=1503886732" alt="provider">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- BIKING SOLO -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/biking_solo" target="_blank">biking-solo</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/biking_solo" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/biking-solo_1024x1024.jpg?v=1494937657" alt="biking-solo">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- CHANEL -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/chanel" target="_blank">chanel</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/chanel" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0946/8632/files/single_art_FINAL_1024x1024.jpg?v=1489273415" alt="chanel">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- BLOND -->
+<div class="post">
+  <div class="post-title"><a href="https://blonded.ffm.to/blonde" target="_blank">blond</a></div>
+  <div class="post-img"><a href="https://blonded.ffm.to/blonde" target="_blank">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/BlondeCover_grande.jpg" alt="blond">
+  </a></div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- BLONDE APPLE MUSIC -->
+<div class="post">
+  <div class="post-title"><a href="#">blonde stream</a></div>
+  <iframe class="post-embed" src="https://embed.music.apple.com/us/album/blonde/1146195596" height="450" allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" loading="lazy"></iframe>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+
+<!-- TWO VERSIONS -->
+<div class="post">
+  <div class="post-title"><a href="#">Two versions</a></div>
+  <div class="post-img">
+    <img src="https://cdn.shopify.com/s/files/1/0847/8186/files/july20151-739x1024_1024x1024.jpg" alt="Two versions">
+  </div>
+  <div class="post-text">"I got two versions. I got twoooo versions." #ISSUE1 #ALBUM3 #JULY2015 #BOYSDONTCRY</div>
+  <div class="post-share"><span class="share-label">Share</span><div class="share-icons"><a href="#">FB</a><a href="#">TW</a><a href="#">EM</a></div></div>
+</div>
+```
+
+  </div><!-- /feed -->
+
+  <footer>
+    <a href="#">PRIVACY</a>
+    <a href="#">TERMS</a>
+    <a href="#">HELP</a>
+  </footer>
+
+</div><!-- /site -->
+
+<!-- SUBSCRIBE -->
+
+<div class="subscribe-banner">
+  <div class="subscribe-inner">
+    <span class="subscribe-label">Subscribe</span>
+    <div class="subscribe-form">
+      <input class="subscribe-input" type="email" placeholder="email address">
+      <button class="subscribe-btn">&#8594;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Live timestamp
+  function tick() {
+    const now = new Date();
+    const d = (now.getMonth()+1) + '.' + now.getDate() + '.' + String(now.getFullYear()).slice(2);
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('ts').textContent = d + ' ' + h + ':' + m + ' ' + (Intl.DateTimeFormat().resolvedOptions().timeZone || '');
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Slideshow
+  const idx = {};
+  function slide(id, dir) {
+    const track = document.getElementById('t-' + id);
+    const counter = document.getElementById('c-' + id);
+    const total = track.children.length;
+    if (idx[id] === undefined) idx[id] = 0;
+    idx[id] = (idx[id] + dir + total) % total;
+    track.style.transform = 'translateX(-' + (idx[id] * 100) + '%)';
+    counter.textContent = (idx[id]+1) + ' / ' + total;
+  }
+
+  // Size/color toggle
+  document.querySelectorAll('.size-row, .color-row').forEach(row => {
+    row.querySelectorAll('.size-btn:not(.sold)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        row.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
