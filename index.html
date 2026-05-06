@@ -1,43 +1,81 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MATDONTCRY</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg: #f5f2ee;
-      --text: #111;
-      --muted: #999;
-      --border: #ddd;
-      --font: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-    html, body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 12px;
-      line-height: 1.4;
-      -webkit-font-smoothing: antialiased;
-    }
-    a { color: inherit; text-decoration: none; }
 
 ```
+/* ── THEMES ── */
+[data-theme="light"] {
+  --bg: #f5f2ee;
+  --text: #111;
+  --muted: #999;
+  --border: #ddd;
+  --grain: rgba(0,0,0,0.03);
+}
+[data-theme="dark"] {
+  --bg: #0e0e0e;
+  --text: #e8e4de;
+  --muted: #555;
+  --border: #222;
+  --grain: rgba(255,255,255,0.03);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s, color 0.4s;
+  cursor: none;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ── GRAIN OVERLAY ── */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed; top: 0; left: 0;
+  width: 8px; height: 8px;
+  background: var(--text);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transition: transform 0.1s, background 0.3s;
+  transform: translate(-50%, -50%);
+}
+#cursor.big {
+  transform: translate(-50%, -50%) scale(4);
+  opacity: 0.15;
+}
+
+/* ── LAYOUT ── */
 .site {
   max-width: 480px;
   margin: 0 auto;
-  padding: 0 16px 80px;
+  padding: 0 16px 100px;
 }
 
-/* TOP BAR */
+/* ── TOPBAR ── */
 .topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   padding: 16px 0 12px;
   border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg); z-index: 50;
+  transition: background 0.4s;
 }
 .topbar-left { display: flex; align-items: center; gap: 14px; }
 .site-title { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -47,81 +85,220 @@
   color: var(--muted); transition: color 0.15s;
 }
 .topbar-nav a:hover, .topbar-nav a.active { color: var(--text); }
-.topbar-right { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
 
+/* ── DARK MODE TOGGLE ── */
+.theme-btn {
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  font-family: inherit; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 8px; cursor: none; transition: all 0.2s;
+}
+.theme-btn:hover { border-color: var(--text); color: var(--text); }
+
+/* ── NOW PLAYING BAR ── */
+.now-playing {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.np-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--text);
+  flex-shrink: 0;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.2; }
+}
+.np-label {
+  font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); flex-shrink: 0;
+}
+.np-track {
+  font-size: 10px; letter-spacing: 0.04em; color: var(--text);
+  white-space: nowrap;
+  animation: marquee 18s linear infinite;
+}
+@keyframes marquee {
+  0% { transform: translateX(100px); }
+  100% { transform: translateX(-400px); }
+}
+
+/* ── TIMESTAMP ── */
 .timestamp {
   font-size: 10px; color: var(--muted); letter-spacing: 0.04em;
   padding: 10px 0; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between;
 }
 
-/* POSTS */
-.post { border-bottom: 1px solid var(--border); padding: 24px 0; }
+/* ── RADIO STRIP ── */
+.radio-strip {
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.radio-left { display: flex; align-items: center; gap: 10px; }
+.on-air {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+}
+.on-air-dot {
+  width: 5px; height: 5px; border-radius: 50%; background: #c00;
+  animation: blink 1s step-start infinite;
+}
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+.radio-freq {
+  font-size: 13px; font-weight: 700; letter-spacing: -0.02em; color: var(--text);
+}
+.radio-name {
+  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ── POSTS ── */
+.post {
+  border-bottom: 1px solid var(--border);
+  padding: 24px 0;
+  opacity: 0; transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.post.visible { opacity: 1; transform: translateY(0); }
+
 .post-title {
   font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
   text-transform: uppercase; margin-bottom: 12px;
 }
 
-/* IMAGE */
-.post-img { width: 100%; background: #e8e4df; }
+/* ── IMAGES with grain + hover date ── */
+.post-img {
+  width: 100%; background: #e8e4df; position: relative; overflow: hidden;
+}
 .post-img img {
-  width: 100%; height: auto; display: block;
-  object-fit: cover;
+  width: 100%; height: auto; display: block; object-fit: cover;
+  transition: filter 0.4s;
+  filter: contrast(1.02) saturate(0.95);
+}
+.post-img:hover img { filter: contrast(1.05) saturate(0.85) brightness(0.92); }
+.photo-date {
+  position: absolute; bottom: 10px; left: 12px;
+  font-size: 9px; letter-spacing: 0.1em; color: rgba(255,255,255,0.85);
+  opacity: 0; transition: opacity 0.3s;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+.post-img:hover .photo-date { opacity: 1; }
+
+/* ── FILM BORDER (35mm effect) ── */
+.film-wrap {
+  background: #000; padding: 8px 0; position: relative;
+}
+.film-holes {
+  display: flex; justify-content: space-between;
+  padding: 0 4px; margin-bottom: 6px;
+}
+.film-holes span {
+  width: 10px; height: 7px; border: 1px solid #333; border-radius: 1px;
+}
+.film-img { width: 100%; display: block; }
+.film-label {
+  font-size: 8px; letter-spacing: 0.14em; color: #f90;
+  text-align: right; padding: 4px 8px 0;
+  font-family: monospace;
 }
 
-/* SLIDESHOW */
+/* ── SLIDESHOW ── */
 .slideshow { position: relative; overflow: hidden; background: #e8e4df; }
-.slideshow-track { display: flex; transition: transform 0.4s ease; }
+.slideshow-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
 .slideshow-track img { min-width: 100%; width: 100%; height: auto; display: block; object-fit: cover; }
 .slide-btn {
   position: absolute; top: 50%; transform: translateY(-50%);
   background: rgba(245,242,238,0.75); border: none; width: 28px; height: 28px;
-  cursor: pointer; font-size: 14px; display: flex; align-items: center;
+  cursor: none; font-size: 14px; display: flex; align-items: center;
   justify-content: center; color: #111; z-index: 2; transition: background 0.15s;
 }
-.slide-btn:hover { background: rgba(245,242,238,0.95); }
+.slide-btn:hover { background: var(--bg); }
 .slide-btn.prev { left: 6px; } .slide-btn.next { right: 6px; }
 .slide-counter {
   position: absolute; bottom: 8px; right: 10px;
-  font-size: 9px; letter-spacing: 0.08em; color: rgba(255,255,255,0.8);
-  background: rgba(0,0,0,0.25); padding: 2px 5px;
+  font-size: 9px; letter-spacing: 0.08em; color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.3); padding: 2px 6px;
 }
 
-/* EMBEDS */
+/* ── NOTES / THOUGHT POST ── */
+.post-note {
+  font-size: 13px; line-height: 1.8; letter-spacing: 0.01em;
+  color: var(--text); padding: 8px 0;
+  font-style: italic;
+}
+.post-note-meta {
+  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-top: 10px;
+}
+
+/* ── QUOTE ROTATOR ── */
+.quote-block {
+  padding: 20px 0 8px;
+  border-bottom: 1px solid var(--border);
+}
+.quote-text {
+  font-size: 14px; line-height: 1.75; letter-spacing: -0.01em;
+  color: var(--text); font-style: italic; min-height: 60px;
+  transition: opacity 0.5s;
+}
+.quote-text.fade { opacity: 0; }
+.quote-author {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin-top: 10px;
+}
+
+/* ── DAY COUNTER ── */
+.counter-block {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 8px;
+}
+.counter-num {
+  font-size: 36px; font-weight: 700; letter-spacing: -0.04em;
+  color: var(--text); line-height: 1;
+}
+.counter-label {
+  font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── EMBEDS ── */
 .post-embed { width: 100%; border: none; display: block; }
 
-/* TEXT */
-.post-text { font-size: 11px; line-height: 1.65; letter-spacing: 0.01em; margin-top: 10px; color: var(--muted); }
-
-/* SHARE */
+/* ── SHARE ── */
 .post-share { display: flex; align-items: center; margin-top: 12px; }
 .share-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-right: 10px; }
 .share-icons { display: flex; gap: 10px; }
 .share-icons a { font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; }
 .share-icons a:hover { color: var(--text); }
 
-/* FOOTER */
+/* ── FOOTER ── */
 footer { border-top: 1px solid var(--border); padding: 16px 0 24px; display: flex; gap: 20px; }
 footer a { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; }
 footer a:hover { color: var(--text); }
 
-/* SUBSCRIBE BANNER */
+/* ── SUBSCRIBE ── */
 .subscribe-banner {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: var(--bg); border-top: 1px solid var(--border);
   padding: 10px 16px; z-index: 100;
+  transition: background 0.4s;
 }
 .subscribe-inner { max-width: 480px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
 .subscribe-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
 .subscribe-form { display: flex; gap: 8px; }
 .subscribe-input {
-  border: 1px solid var(--border); background: transparent; font-family: var(--font);
-  font-size: 10px; padding: 5px 10px; outline: none; width: 160px;
+  border: 1px solid var(--border); background: transparent; font-family: inherit;
+  font-size: 10px; padding: 5px 10px; outline: none; width: 150px;
+  color: var(--text); transition: border-color 0.2s;
 }
 .subscribe-input:focus { border-color: var(--text); }
 .subscribe-btn {
-  background: var(--text); color: var(--bg); border: none; font-family: var(--font);
+  background: var(--text); color: var(--bg); border: none; font-family: inherit;
   font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  padding: 5px 12px; cursor: pointer; transition: opacity 0.15s;
+  padding: 5px 12px; cursor: none; transition: opacity 0.15s;
 }
 .subscribe-btn:hover { opacity: 0.7; }
 ```
@@ -130,9 +307,13 @@ footer a:hover { color: var(--text); }
 </head>
 <body>
 
+<!-- CURSOR -->
+
+<div id="cursor"></div>
+
 <div class="site">
 
-  <!-- TOP BAR -->
+  <!-- TOPBAR -->
 
   <div class="topbar">
     <div class="topbar-left">
@@ -140,40 +321,98 @@ footer a:hover { color: var(--text); }
       <nav class="topbar-nav">
         <a href="#" class="active">All</a>
         <a href="#">Photo</a>
-        <a href="#">Video</a>
         <a href="#">Audio</a>
       </nav>
     </div>
-    <div class="topbar-right"><a href="#">@matdontcry</a></div>
+    <div class="topbar-right">
+      <button class="theme-btn" onclick="toggleTheme()">○ / ●</button>
+      <a href="https://www.instagram.com/matdontcry" target="_blank" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">IG</a>
+    </div>
   </div>
 
-  <div class="timestamp" id="ts"></div>
+  <!-- NOW PLAYING -->
+
+  <div class="now-playing">
+    <div class="np-dot"></div>
+    <span class="np-label">listening —</span>
+    <span class="np-track" id="np-track">self control · frank ocean &nbsp;&nbsp;&nbsp; nikes · frank ocean &nbsp;&nbsp;&nbsp; nights · frank ocean &nbsp;&nbsp;&nbsp; solo · frank ocean &nbsp;&nbsp;&nbsp; ivy · frank ocean</span>
+  </div>
+
+  <!-- TIMESTAMP + COUNTER -->
+
+  <div class="timestamp">
+    <span id="ts"></span>
+    <span id="tz" style="color:var(--muted);"></span>
+  </div>
+
+  <!-- RADIO STRIP -->
+
+  <div class="radio-strip">
+    <div class="radio-left">
+      <div class="on-air"><div class="on-air-dot"></div> ON AIR</div>
+      <div>
+        <div class="radio-freq">97.8 FM</div>
+        <div class="radio-name">matdontcry radio</div>
+      </div>
+    </div>
+    <a href="https://open.spotify.com/playlist/72flSzoSzGovZrnhWnCyJM" target="_blank"
+       style="font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:1px;">
+      tune in →
+    </a>
+  </div>
+
+  <!-- QUOTE ROTATOR -->
+
+  <div class="quote-block">
+    <div class="quote-text" id="quote-text"></div>
+    <div class="quote-author" id="quote-author"></div>
+  </div>
+
+  <!-- DAY COUNTER -->
+
+  <div class="counter-block">
+    <span class="counter-num" id="day-count"></span>
+    <span class="counter-label">days creating</span>
+  </div>
 
   <div class="feed">
 
 ```
-<!-- POST 1: Mirror selfie (tank top) -->
+<!-- POST 1: mirror selfie — 35mm film style -->
 <div class="post">
   <div class="post-title"><a href="#">mirror</a></div>
-  <div class="post-img">
-    <img src="IMG_3208.jpeg" alt="mirror selfie">
+  <div class="film-wrap">
+    <div class="film-holes">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <img class="film-img" src="IMG_3208.jpeg" alt="mirror selfie">
+    <div class="film-holes" style="margin-top:6px;margin-bottom:0;">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="film-label">MATDONTCRY · 2025 · 35mm</div>
   </div>
   <div class="post-share">
     <span class="share-label">Share</span>
     <div class="share-icons">
       <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a>
-      <a href="#">TW</a><a href="#">LK</a>
+      <a href="#">LK</a>
     </div>
   </div>
 </div>
 
-<!-- POST 2: Slideshow — portrait + couple -->
+<!-- POST 2: slideshow recent -->
 <div class="post">
   <div class="post-title"><a href="#">recent</a></div>
   <div class="slideshow">
     <div class="slideshow-track" id="t-recent">
-      <img src="IMG_3207.jpeg" alt="">
-      <img src="IMG_3210.jpeg" alt="">
+      <div style="position:relative;min-width:100%;">
+        <img src="IMG_3207.jpeg" alt="">
+        <div class="photo-date">2025</div>
+      </div>
+      <div style="position:relative;min-width:100%;">
+        <img src="IMG_3210.jpeg" alt="">
+        <div class="photo-date">2025</div>
+      </div>
     </div>
     <button class="slide-btn prev" onclick="slide('recent',-1)">&#8592;</button>
     <button class="slide-btn next" onclick="slide('recent', 1)">&#8594;</button>
@@ -182,13 +421,25 @@ footer a:hover { color: var(--text); }
   <div class="post-share">
     <span class="share-label">Share</span>
     <div class="share-icons">
-      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a>
-      <a href="#">TW</a><a href="#">LK</a>
+      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a><a href="#">LK</a>
     </div>
   </div>
 </div>
 
-<!-- POST 3: Spotify Playlist -->
+<!-- POST 3: THOUGHT / NOTE -->
+<div class="post">
+  <div class="post-title"><a href="#">note</a></div>
+  <div class="post-note">
+    some days feel longer than they are. you learn to sit with the quiet instead of running from it. that's when things start making sense.
+  </div>
+  <div class="post-note-meta">— matdontcry · 2025</div>
+  <div class="post-share">
+    <span class="share-label">Share</span>
+    <div class="share-icons"><a href="#">TW</a><a href="#">LK</a></div>
+  </div>
+</div>
+
+<!-- POST 4: SPOTIFY PLAYLIST -->
 <div class="post">
   <div class="post-title"><a href="https://open.spotify.com/playlist/72flSzoSzGovZrnhWnCyJM" target="_blank">playlist</a></div>
   <iframe class="post-embed"
@@ -200,48 +451,67 @@ footer a:hover { color: var(--text); }
     <span class="share-label">Share</span>
     <div class="share-icons">
       <a href="https://open.spotify.com/playlist/72flSzoSzGovZrnhWnCyJM" target="_blank">SP</a>
-      <a href="#">TW</a><a href="#">LK</a>
+      <a href="#">LK</a>
     </div>
   </div>
 </div>
 
-<!-- POST 4: Candle -->
+<!-- POST 5: night candle -->
 <div class="post">
   <div class="post-title"><a href="#">night</a></div>
   <div class="post-img">
-    <img src="IMG_3211.jpeg" alt="candle night">
+    <img src="IMG_3211.jpeg" alt="candle">
+    <div class="photo-date">night · 2025</div>
   </div>
   <div class="post-share">
     <span class="share-label">Share</span>
     <div class="share-icons">
-      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a>
-      <a href="#">TW</a><a href="#">LK</a>
+      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a><a href="#">LK</a>
     </div>
   </div>
 </div>
 
-<!-- POST 5: Books (B&W) -->
+<!-- POST 6: books B&W -->
 <div class="post">
   <div class="post-title"><a href="#">reading</a></div>
   <div class="post-img">
-    <img src="IMG_3192.jpeg" alt="books">
+    <img src="IMG_3192.jpeg" alt="books" style="filter:grayscale(1) contrast(1.05);">
+    <div class="photo-date">librería · 2025</div>
   </div>
   <div class="post-share">
     <span class="share-label">Share</span>
     <div class="share-icons">
-      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a>
-      <a href="#">TW</a><a href="#">LK</a>
+      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a><a href="#">LK</a>
     </div>
   </div>
 </div>
 
-<!-- POST 6: Slideshow — tunnel + screen -->
+<!-- POST 7: SECOND THOUGHT -->
+<div class="post">
+  <div class="post-title"><a href="#">note 002</a></div>
+  <div class="post-note">
+    the books you read become part of how you see the world. choose them carefully.
+  </div>
+  <div class="post-note-meta">— matdontcry · 2025</div>
+  <div class="post-share">
+    <span class="share-label">Share</span>
+    <div class="share-icons"><a href="#">TW</a><a href="#">LK</a></div>
+  </div>
+</div>
+
+<!-- POST 8: moments slideshow -->
 <div class="post">
   <div class="post-title"><a href="#">moments</a></div>
   <div class="slideshow">
     <div class="slideshow-track" id="t-moments">
-      <img src="IMG_3173.jpeg" alt="tunnel">
-      <img src="IMG_2222.jpeg" alt="screen">
+      <div style="position:relative;min-width:100%;">
+        <img src="IMG_3173.jpeg" alt="tunnel">
+        <div class="photo-date">en tránsito · 2025</div>
+      </div>
+      <div style="position:relative;min-width:100%;">
+        <img src="IMG_2222.jpeg" alt="screen">
+        <div class="photo-date">pantalla · 2025</div>
+      </div>
     </div>
     <button class="slide-btn prev" onclick="slide('moments',-1)">&#8592;</button>
     <button class="slide-btn next" onclick="slide('moments', 1)">&#8594;</button>
@@ -250,8 +520,7 @@ footer a:hover { color: var(--text); }
   <div class="post-share">
     <span class="share-label">Share</span>
     <div class="share-icons">
-      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a>
-      <a href="#">TW</a><a href="#">LK</a>
+      <a href="https://www.instagram.com/matdontcry" target="_blank">IG</a><a href="#">LK</a>
     </div>
   </div>
 </div>
@@ -274,28 +543,89 @@ footer a:hover { color: var(--text); }
     <span class="subscribe-label">Subscribe</span>
     <div class="subscribe-form">
       <input class="subscribe-input" type="email" placeholder="email address">
-      <button class="subscribe-btn">&#8594;</button>
+      <button class="subscribe-btn">→</button>
     </div>
   </div>
 </div>
 
 <script>
-  // Live timestamp
+  /* ── CURSOR ── */
+  const cur = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px';
+    cur.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .slide-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => cur.classList.add('big'));
+    el.addEventListener('mouseleave', () => cur.classList.remove('big'));
+  });
+
+  /* ── DARK MODE ── */
+  function toggleTheme() {
+    const html = document.documentElement;
+    html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  }
+
+  /* ── TIMESTAMP ── */
   function tick() {
     const now = new Date();
     const d = (now.getMonth()+1) + '.' + now.getDate() + '.' + String(now.getFullYear()).slice(2);
     const h = String(now.getHours()).padStart(2,'0');
     const m = String(now.getMinutes()).padStart(2,'0');
-    document.getElementById('ts').textContent = d + ' ' + h + ':' + m;
+    const s = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('ts').textContent = d + ' ' + h + ':' + m + ':' + s;
+    document.getElementById('tz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
   tick(); setInterval(tick, 1000);
 
-  // Slideshow
+  /* ── DAY COUNTER ── */
+  const startDate = new Date('2023-01-01'); // cambia esta fecha por cuando empezaste
+  const days = Math.floor((new Date() - startDate) / (1000 * 60 * 60 * 24));
+  document.getElementById('day-count').textContent = days;
+
+  /* ── QUOTE ROTATOR ── */
+  const quotes = [
+    { text: "I believe that if you have a reason to be happy, that's great. But even if you don't, you can still choose to be.", author: "frank ocean" },
+    { text: "The same wall that keeps out disappointment keeps out happiness.", author: "jim rohn" },
+    { text: "Wherever you go, there you are.", author: "— " },
+    { text: "You can't make everybody happy. You are not an avocado.", author: "— " },
+    { text: "Do what you can, with what you have, where you are.", author: "theodore roosevelt" },
+    { text: "Stay low. Stay focused. Stay deadly.", author: "— " },
+  ];
+  let qi = Math.floor(Math.random() * quotes.length);
+  const qEl = document.getElementById('quote-text');
+  const qA  = document.getElementById('quote-author');
+
+  function showQuote() {
+    qEl.classList.add('fade');
+    setTimeout(() => {
+      qi = (qi + 1) % quotes.length;
+      qEl.textContent = '"' + quotes[qi].text + '"';
+      qA.textContent  = '— ' + quotes[qi].author;
+      qEl.classList.remove('fade');
+    }, 500);
+  }
+  qEl.textContent = '"' + quotes[qi].text + '"';
+  qA.textContent  = '— ' + quotes[qi].author;
+  setInterval(showQuote, 6000);
+
+  /* ── SCROLL FADE IN ── */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.post').forEach(p => observer.observe(p));
+
+  /* ── SLIDESHOW ── */
   const idx = {};
   function slide(id, dir) {
-    const track = document.getElementById('t-' + id);
+    const track   = document.getElementById('t-' + id);
     const counter = document.getElementById('c-' + id);
-    const total = track.children.length;
+    const total   = track.children.length;
     if (idx[id] === undefined) idx[id] = 0;
     idx[id] = (idx[id] + dir + total) % total;
     track.style.transform = 'translateX(-' + (idx[id] * 100) + '%)';
